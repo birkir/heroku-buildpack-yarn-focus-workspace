@@ -142,11 +142,17 @@ yarn_node_modules() {
 
 yarn_2_install() {
   local build_dir=${1:-}
+  local focus=${YARN_WORKSPACE_FOCUS:-false}
 
   echo "Running 'yarn install' with yarn.lock"
   cd "$build_dir" || return
 
-  monitor "yarn-2-install" yarn install --immutable 2>&1
+  if [[ -n "$focus" ]]; then
+    echo "Running a single workspace $focus"
+    monitor "yarn-2-install" yarn workspace focus "$focus" --immutable 2>&1
+  else
+    monitor "yarn-2-install" yarn install --immutable 2>&1
+  fi
 }
 
 yarn_prune_devdependencies() {
