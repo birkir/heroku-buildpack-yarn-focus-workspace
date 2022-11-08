@@ -148,8 +148,8 @@ yarn_2_install() {
   cd "$build_dir" || return
 
   if [[ -n "$focus" ]]; then
-    echo "Running a single workspace $focus"
-    monitor "yarn-2-install" yarn workspace focus "$focus" --immutable 2>&1
+    echo "Running a single workspace '$focus'"
+    monitor "yarn-2-install" yarn workspaces focus "$focus" 2>&1
   else
     monitor "yarn-2-install" yarn install --immutable 2>&1
   fi
