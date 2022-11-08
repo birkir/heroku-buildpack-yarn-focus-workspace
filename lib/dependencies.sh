@@ -142,7 +142,7 @@ yarn_node_modules() {
 
 yarn_2_install() {
   local build_dir=${1:-}
-  local focus=${YARN_WORKSPACE_FOCUS:-false}
+  local focus=${YARN2_WORKSPACE_FOCUS:-false}
 
   echo "Running 'yarn install' with yarn.lock"
   cd "$build_dir" || return
