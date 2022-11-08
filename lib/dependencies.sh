@@ -142,14 +142,13 @@ yarn_node_modules() {
 
 yarn_2_install() {
   local build_dir=${1:-}
-  local focus=${YARN2_WORKSPACE_FOCUS:-false}
 
   echo "Running 'yarn install' with yarn.lock"
   cd "$build_dir" || return
 
-  if [[ -n "$focus" ]]; then
-    echo "Running a single workspace '$focus'"
-    monitor "yarn-2-install" yarn workspaces focus "$focus" 2>&1
+  if [ ! -z "$YARN2_FOCUS_WORKSPACE" ]; then
+    echo "Running with focused workspace $YARN2_FOCUS_WORKSPACE"
+    monitor "yarn-2-install" yarn workspaces focus $(echo $YARN2_FOCUS_WORKSPACE) 2>&1
   else
     monitor "yarn-2-install" yarn install --immutable 2>&1
   fi
@@ -181,7 +180,13 @@ yarn_prune_devdependencies() {
     cd "$build_dir" || return
     echo "Running 'yarn heroku prune'"
     export YARN_PLUGINS="${buildpack_dir}/yarn2-plugins/prune-dev-dependencies/bundles/@yarnpkg/plugin-prune-dev-dependencies.js"
-    monitor "yarn-prune" yarn heroku prune
+    
+    if [ ! -z "$YARN2_FOCUS_WORKSPACE" ]; then
+      echo "Pruning with focused workspace"
+      monitor "yarn-prune" yarn workspaces focus $(echo $YARN2_FOCUS_WORKSPACE) --production 2>&1
+    else
+      monitor "yarn-prune" yarn heroku prune
+    fi
     meta_set "skipped-prune" "false"
   else
     cd "$build_dir" || return
